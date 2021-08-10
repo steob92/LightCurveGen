@@ -45,7 +45,7 @@ int main()
   // Fit Parameters
   double *fitParms = 0;
   
-  TH1D *hBeta = new TH2D("hBeta", "hBeta;Simulated Index;", 100, 0,5);
+  TH1D *hBeta = new TH1D("hBeta", "hBeta;Simulated Index;", 100, 0,5);
   
   int nsimmed = 0;
   
@@ -57,13 +57,10 @@ int main()
     
     
     tk95->GetRandomLightCurve(nPoints, delT , time, flux);
-    lc_graphs[i] = new TGraph(nPoints, &(time[0]), &(flux[0]));
-    lc_graphs[i]->SetLineColor(i+1);
-
     psd->SetLightCurve( nPoints, delT, time, flux);
     fitParms = psd->FitPSD();
     
-    cout << psd->fFitStatus << endl;
+    cout << psd->GetFitStatus() << endl;
     
     nsimmed++;
   }
