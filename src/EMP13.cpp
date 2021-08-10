@@ -143,7 +143,7 @@ int EMP13::GetRandomLightCurveEMP13(std::vector <double> &iTime, std::vector <do
 
   bool iConverged = false;
   int i_itterations = 0;
-  std::cout << "\t FFTs" << std::endl;
+  //std::cout << "\t FFTs" << std::endl;
 
   TVirtualFFT* iFFT_TK95 = TVirtualFFT::FFT(1, &i_nsim, "R2C M K");
   TVirtualFFT* iFFT_Flux = TVirtualFFT::FFT(1, &i_nsim, "R2C M K");
@@ -175,11 +175,11 @@ int EMP13::GetRandomLightCurveEMP13(std::vector <double> &iTime, std::vector <do
       }
       delta /= i_nsim;
 
-      std::cout << i_itterations << " " << delta << std::endl;
+      //std::cout << i_itterations << " " << delta << std::endl;
 
       if ((delta < 1e-19) || (i_itterations > 1000))
       {
-        std::cout << "Converged!!" << std::endl;
+        // std::cout << "Converged!!" << std::endl;
         iConverged = true;
         break;
       }

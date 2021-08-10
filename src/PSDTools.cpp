@@ -272,7 +272,7 @@ double* PSDTools::FitPSD()
   minimum->SetMaxFunctionCalls(1000000); // for Minuit/Minuit2
   minimum->SetMaxIterations(1000000);  // for GSL
   minimum->SetTolerance(10.);
-  minimum->SetPrintLevel(1);
+  minimum->SetPrintLevel(3);
   minimum->SetErrorDef(1.);
 
   // create function wrapper for minimizer
