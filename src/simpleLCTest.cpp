@@ -31,7 +31,7 @@ int main()
 
   // indicies to sim
   int nSims = 5;
-  int nPoints = 1000;
+  int nPoints = 10000;
   double *indx = new double[nSims];
 
   // Vector to hold graphs
