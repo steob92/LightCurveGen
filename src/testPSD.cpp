@@ -24,9 +24,9 @@ int main()
   // Creating new TK95 light curve as a starting point
 
 
-  int nPoints = 1000; \\ number of light curve points
-  double delT = 1.;   \\ spacing of the light curve 
-  double beta = 2.0;  \\ PSD index to be simed
+  int nPoints = 1000; // number of light curve points
+  double delT = 1.;   // spacing of the light curve 
+  double beta = 2.0;  // PSD index to be simed
 
   // Gen and analysis objects
   TK95 *tk95 = new TK95();
