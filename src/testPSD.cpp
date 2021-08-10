@@ -21,12 +21,12 @@ using namespace std;
 
 int main()
 {
-    
+
   // Creating new TK95 light curve as a starting point
 
 
-  int nPoints = 10; // number of light curve points
-  double delT = 1.;   // spacing of the light curve 
+  int nPoints = 1000; // number of light curve points
+  double delT = 1.;   // spacing of the light curve
   double beta = 2.0;  // PSD index to be simed
 
   // Gen and analysis objects
@@ -37,8 +37,8 @@ int main()
   psd->SetModel(0);
   tk95->SetModel(0);
   tk95->SetModelParameter(0, beta);
-  
-  
+
+
   // double arrays to hold the light curves
   double *time = new double[nPoints];
   double *flux = new double[nPoints];
@@ -59,31 +59,34 @@ int main()
   for (int i = 0; i < nPoints; i ++)
     {
       scaled_flux[i] = 100 * (i_max - flux[i]) / (i_max - i_min);
-      
+
     }
-  
+
 
   EMP13 *lc_emp = new EMP13();
   lc_emp->SetLightCurve(nPoints, 1, &(time[0]), &(scaled_flux[0]));
   lc_emp->SetModel(0);
   lc_emp->SetModelParameter(0, 2.0);
 
-  
+
   // Fit Parameters
   double *fitParms = 0;
-  
+
   TH1D *hBeta = new TH1D("hBeta", "hBeta;Simulated Index;", 100, 1.5,2.5);
-  TH1D *hConv = new TH1D("hConv", "hConv;Number of itterations;", 100, 0,100);
-  
+  TH1D *hConv = new TH1D("hConv", "hConv;Number of itterations;", 100, 0,1000);
+
   int nsimmed = 0;
-  
- 
-  
+
+
+
   // While used here so we can require accurate PSD estimate
   int nitter = 0;
-  while (nsimmed < 1000)
+  int ntot = 1000;
+  while (nsimmed < ntot)
   {
 
+    if (100*nsimmed/ntot % 10 == 0){cout << 100*nsimmed/ntot << endl;}
+    // cout << nsimmed << endl;
     vector <double> iSimTime;
     vector <double> iSimFlux;
 
@@ -91,7 +94,7 @@ int main()
 
 
     psd->SetLightCurve( nPoints, delT, time, &(iSimFlux[0]));
-			
+
     fitParms = psd->FitPSD();
 
     // Only take converged fits
@@ -102,6 +105,8 @@ int main()
     hConv->Fill(nitter);
     nsimmed++;
   }
+
+  cout << endl;
 
   TCanvas *c1 = new TCanvas();
   hBeta->Draw();

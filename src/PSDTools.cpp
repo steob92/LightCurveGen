@@ -202,7 +202,6 @@ void PSDTools::CalculatePSD()
 
 
 
-  // Calculate the PSD, Amplitude and Phase of the FFT
   for (int i = 0; i < fNpoints; i++)
   {
     fFFT->GetPointComplex(i, fRe[i], fIm[i]);
@@ -216,7 +215,7 @@ void PSDTools::CalculatePSD()
 
 
 /*
-  Equation A11 of Emmanoulopoulos et al 2013
+  Equation A11 of Emmanoulopoulos 2013
 */
 double PSDTools::Get2LogL(const double* parms)
 {
@@ -272,7 +271,7 @@ double* PSDTools::FitPSD()
   minimum->SetMaxFunctionCalls(1000000); // for Minuit/Minuit2
   minimum->SetMaxIterations(1000000);  // for GSL
   minimum->SetTolerance(10.);
-  minimum->SetPrintLevel(3);
+  minimum->SetPrintLevel(0);
   minimum->SetErrorDef(1.);
 
   // create function wrapper for minimizer
@@ -294,7 +293,6 @@ double* PSDTools::FitPSD()
     variable[1] = 1.0;
     step[1] = 0.1;
 
-    // Is limited variable needed?
     minimum->SetLimitedVariable(0, "Norm", variable[0], step[0], 0, 1e5);
     // minimum->SetVariable(1, "Beta", variable[1], step[1]);
     minimum->SetLimitedVariable(1, "Beta", variable[0], step[0], 0, 5);
@@ -321,7 +319,9 @@ double* PSDTools::FitPSD()
 
 
   // do the minimization
+  // std::cout << "Minimizing" << std::endl;
   minimum->Minimize();
+  // std::cout << "Done" << std::endl;
 
   const double *xs = minimum->X();
   fFitStatus = minimum->Status();
