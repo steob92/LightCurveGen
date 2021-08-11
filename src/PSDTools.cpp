@@ -265,7 +265,7 @@ TGraph* PSDTools::GetPSD()
 double* PSDTools::FitPSD()
 {
   ROOT::Math::Minimizer* minimum =
-  ROOT::Math::Factory::CreateMinimizer("Minuit2", "Minos");
+  ROOT::Math::Factory::CreateMinimizer("Minuit", "Minos");
 
   // set tolerance , etc...
   minimum->SetMaxFunctionCalls(1000000); // for Minuit/Minuit2

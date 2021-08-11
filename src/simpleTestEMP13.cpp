@@ -23,12 +23,12 @@ using namespace std;
 int main()
 {
 
-  // string infile = "/mnt/Storage/VERITAS/SourceAnalysis/OJ287/2017_Flare/Data/LCData/SwiftXRT_Soft_LC.dat";
+  string infile = "/mnt/Storage/VERITAS/SourceAnalysis/OJ287/2017_Flare/Data/LCData/SwiftXRT_Soft_LC.dat";
   /* 
     This code is specific to the my own system...
     ToDo: Replace with a publically available dataset
   */
-  string infile = "/Users/obriens/OJ287_Update/Data/LCData/SwiftXRT_Soft_LC.dat";
+  // string infile = "/Users/obriens/OJ287_Update/Data/LCData/SwiftXRT_Soft_LC.dat";
 
   // Read in data from TTree
   TTree *tLC = new TTree();

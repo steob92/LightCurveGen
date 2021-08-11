@@ -66,18 +66,17 @@ public:
   int GetNPoints(){return fNpoints;}
 
 };
-#endif
 
 
 // Shamelessly grabbed from Stackoverflow
-// class sort_indices
-// {
-//    private:
-//      double* mparr;
-//    public:
-//      sort_indices(double* parr) : mparr(parr) {}
-//      bool operator()(int i, int j) const { return mparr[i]>mparr[j]; }
-// };
+class sort_indices
+{
+   private:
+     double* mparr;
+   public:
+     sort_indices(double* parr) : mparr(parr) {}
+     bool operator()(int i, int j) const { return mparr[i]>mparr[j]; }
+};
 
 template <typename T>
 std::vector<size_t> sort_indexes(const std::vector<T> &v) {
@@ -95,3 +94,4 @@ std::vector<size_t> sort_indexes(const std::vector<T> &v) {
 
   return idx;
 }
+#endif
