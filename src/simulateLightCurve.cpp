@@ -226,6 +226,7 @@ int main(int argc, char *argv[])
         
         psd->SetLightCurve( fNData, fDelT, iSimTime, iSimFlux);
         double *fitParms =  psd->FitPSD();
+
         // Only take converged fits
         if (psd->GetFitStatus() != 0)
         {continue;}
@@ -262,5 +263,5 @@ int main(int argc, char *argv[])
 
 
     fFile->Close();
-    return 1;
+    return 0;
 }
