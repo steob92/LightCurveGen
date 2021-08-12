@@ -30,8 +30,16 @@ public:
     DCF(LightCurve *iLC1, LightCurve *iLC2);
     DCF(int iNPoints1, double *iMJD1, double *iFlux1, int iNPoints2, double *iMJD2, double *iFlux2);
     DCF(int iNPoints1, double *iMJD1, double *iFlux1, double *iFluxErr1, int iNPoints2, double *iMJD2, double *iFlux2, double *iFluxErr2 );
-    ~DCF();
+    
+    ~DCF()
+    {
+        delete[] fTimeBinning;  
+        // delete[] fDCF;
+        // delete []fDCFErr;
+        // delete fLC1;
+        // delete fLC2;
 
+    }
 
     // Passing light curves on the fly
     // iLC is the light curve number (1 or 2)
@@ -44,7 +52,7 @@ public:
     void GetSubLC(double tau, double delT, LightCurve *&iSub1,  LightCurve *&iSub2);
 
 
-    TGraphErrors *CalculateDCF();
+    TGraphErrors *CalculateDCF(bool bPlotErrors = true);
     
 
 };

@@ -179,7 +179,7 @@ void DCF::SetTimeDetails(double iDelT, double iTimeMin, double iTimeMax)
 }
 
 
-TGraphErrors *DCF::CalculateDCF()
+TGraphErrors *DCF::CalculateDCF(bool bPlotErrors)
 {
     // Delete any existing arrays
     // std::cout << "Deleting... " << std::endl;
@@ -219,7 +219,7 @@ TGraphErrors *DCF::CalculateDCF()
 
         // std::cout << i << " " << fTimeBinning[i] << " " <<  0.5*fTimeBin << " " << iFlux1.size() << std::endl;
 
-        if (iFlux1.size() < 5){continue;}
+        if (iFlux1.size() < 11){continue;}
 
         // Calculate the DCF
         // Binned DCF values
@@ -256,19 +256,18 @@ TGraphErrors *DCF::CalculateDCF()
     }
 
 
-    TGraphErrors *gDCF = new TGraphErrors(fNTimeBin, fTimeBinning, fDCF, 0, fDCFErr);
+    TGraphErrors *gDCF = 0;
+    if (bPlotErrors)
+    {
+     gDCF = new TGraphErrors(fNTimeBin, fTimeBinning, fDCF, 0, fDCFErr);
+    }
+    else
+    {
+     gDCF = new TGraphErrors(fNTimeBin, fTimeBinning, fDCF, 0, 0);
+    }
     return gDCF;
 }
 
 
 
-DCF::~DCF()
-{
-    delete []fTimeBinning;
-    delete []fTimeBinning;
-    delete []fDCF;
-    delete []fTimeBinning;
-    delete []fDCFErr;
-    delete fLC1;
-    delete fLC2;
-}
+

@@ -109,7 +109,7 @@ int main()
   psd->SetLightCurve( nPoints, 1.0, inter_time, &(iSimFlux[0]));
   double *outParms =  psd->FitPSD();
 
-  TGraph *gSim = new TGraph(nPoints, &(inter_time[0]), &(iSimFlux[0]));
+  TGraph *gSim = new TGraph(nPoints, &(inter_time[0]), &(iSimFlux[0]));  
   gSim->SetLineColor(3);
 
   TCanvas *c1 = new TCanvas();

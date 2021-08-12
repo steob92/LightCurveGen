@@ -43,12 +43,17 @@ private:
     
 
 public:
-    // LightCurve ( std::vector <double> iMJD, std::vector <double> iFlux );
+    LightCurve ( std::vector <double> iMJD, std::vector <double> iFlux );
     LightCurve ( std::vector <double> iMJD, std::vector <double> iFlux, std::vector <double> iFluxErr );
-    // LightCurve ( int iNPoints, double *iMJD, double *iFlux );
-    // LightCurve ( int iNPoints, double *iMJD, double *iFlux, double* iFluxErr );
+    LightCurve ( int iNPoints, double *iMJD, double *iFlux );
+    LightCurve ( int iNPoints, double *iMJD, double *iFlux, double* iFluxErr );
     
-    ~LightCurve ();
+    ~LightCurve ()
+    {
+        // delete []fMJD;
+        // delete []fFlux;
+        // delete []fFluxErr;
+    }
 
     int fNPoints;
 

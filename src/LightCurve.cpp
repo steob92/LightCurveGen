@@ -35,24 +35,24 @@ LightCurve::LightCurve ( std::vector <double> iMJD, std::vector <double> iFlux, 
 }
 
 
-// LightCurve::LightCurve ( std::vector <double> iMJD, std::vector <double> iFlux )
-// {
-//     std::vector <double> iFluxErr(iMJD.size(), 0 );
-//     LightCurve(iMJD, iFlux, iFluxErr);
-// }
+LightCurve::LightCurve ( std::vector <double> iMJD, std::vector <double> iFlux )
+{
+    std::vector <double> iFluxErr(iMJD.size(), 0 );
+    LightCurve(iMJD, iFlux, iFluxErr);
+}
 
-// LightCurve::LightCurve ( int iNPoints, double *iMJD, double *iFlux )
-// {
-//     std::vector <double> ivMJD(iNPoints);
-//     std::vector <double> ivFlux(iNPoints);
+LightCurve::LightCurve ( int iNPoints, double *iMJD, double *iFlux )
+{
+    std::vector <double> ivMJD(iNPoints);
+    std::vector <double> ivFlux(iNPoints);
 
-//     for (int i = 0; i < iNPoints; i++)
-//     {
-//         ivMJD[i] = iMJD[i];
-//         ivFlux[i] = iFlux[i];
-//     }
-//     LightCurve(ivMJD, ivFlux);
-// }
+    for (int i = 0; i < iNPoints; i++)
+    {
+        ivMJD[i] = iMJD[i];
+        ivFlux[i] = iFlux[i];
+    }
+    LightCurve(ivMJD, ivFlux);
+}
 
 
 // LightCurve::LightCurve ( int iNPoints, double *iMJD, double *iFlux, double* iFluxErr )
@@ -71,13 +71,6 @@ LightCurve::LightCurve ( std::vector <double> iMJD, std::vector <double> iFlux, 
 // }
 
 
-
-LightCurve::~LightCurve ()
-{
-    delete []fMJD;
-    delete []fFlux;
-    delete []fFluxErr;
-}
 
 
 
