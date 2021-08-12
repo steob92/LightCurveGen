@@ -15,6 +15,7 @@ private:
     std::vector <double> fTimeBinning; // Actual Binning
     double fTimeMin;
     double fTimeMax;
+    unsigned int fNSafe;
 
     // DCF Value
     std::vector <double> fDCF;
@@ -33,9 +34,7 @@ public:
     
     ~DCF()
     {
-        // delete[] fDCF;
-        // delete []fDCFErr;
-        delete fLC1;
+        delete fLC1;        
         delete fLC2;
 
     }
@@ -49,7 +48,8 @@ public:
     // Setting time details
     void SetTimeDetails(double iDelT, double iTimeMin, double iTimeMax);
     void GetSubLC(double tau, double delT, LightCurve *&iSub1,  LightCurve *&iSub2);
-
+    // Number of measurements required to calculate DCF for that time bin
+    void SetNSafe(unsigned int isafe){fNSafe=isafe;}
 
     TGraphErrors *CalculateDCF(bool bPlotErrors = true);
     

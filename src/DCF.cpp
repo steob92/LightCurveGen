@@ -8,6 +8,7 @@ DCF::DCF()
     fTimeMin = 0;
     fTimeMax = 0;
 
+    fNSafe = 5;
     fLC1 = 0;
     fLC2 = 0;
 }
@@ -117,15 +118,12 @@ void DCF::GetSubLC(double tau, double delT, LightCurve *&iSub1,  LightCurve *&iS
     std::vector <double> iFlux2;
     std::vector <double> iFluxErr2;
     
-    // std::cout << "Setting LCs: " << fLC1->fNPoints << " " << fLC2->fNPoints << std::endl;
 
-    // std::cout << "\t\t" << iMJD1.size() << " " << iMJD2.size() << std::endl;
     for (int i = 0; i < iMJD1_org.size(); i++)
     {
         for (int j = 0; j < iMJD2_org.size(); j++)
         {
             // Within the defined time range
-            // std::cout << iMJD1_org[i] <<  " " <<  iMJD2_org[j] << tau << abs(iMJD1_org[i] - iMJD2_org[j] - tau)  << std::endl;
             if (abs(iMJD1_org[i] - iMJD2_org[j] - tau) < delT)
             {
                 iMJD1.push_back(iMJD1_org[i]);
@@ -141,14 +139,10 @@ void DCF::GetSubLC(double tau, double delT, LightCurve *&iSub1,  LightCurve *&iS
     }
 
     // Create new light curves with the new subsets
-    // if (iSub1) {delete iSub1;}
+    if (iSub1){delete iSub1;}
     iSub1 = new LightCurve(iMJD1, iFlux1, iFluxErr1);
-    // if (iSub2) {delete iSub2;}
+    if (iSub2){delete iSub2;}
     iSub2 = new LightCurve(iMJD2, iFlux2, iFluxErr2);
-
-
-    // std::cout << iSub1 << " " << iSub2 << std::endl;
-    
     
 }
 
@@ -163,13 +157,10 @@ void DCF::SetTimeDetails(double iDelT, double iTimeMin, double iTimeMax)
     // Round up...
     fNTimeBin = std::ceil((fTimeMax - fTimeMin) / fTimeBin);
 
-    // if (fTimeBinning){delete fTimeBinning;}
     fTimeBinning.assign(fNTimeBin, 0 );
     
     for (int i = 0; i < fNTimeBin; i++)
     {
-        // std::cout << i << " " << fTimeMin + i*fTimeBin << std::endl;
-
         fTimeBinning[i] = fTimeMin + i*fTimeBin;
     }
 
@@ -178,11 +169,6 @@ void DCF::SetTimeDetails(double iDelT, double iTimeMin, double iTimeMax)
 
 TGraphErrors *DCF::CalculateDCF(bool bPlotErrors)
 {
-    // Delete any existing arrays
-    // std::cout << "Deleting... " << std::endl;
-    // if (fDCF) {delete []fDCF;}
-    // if (fDCFErr) {delete []fDCFErr;}
-    // std::cout << "Done... " << std::endl;
 
     fDCF.assign(fNTimeBin, 0 );
     fDCFErr.assign(fNTimeBin, 0 );
@@ -214,27 +200,19 @@ TGraphErrors *DCF::CalculateDCF(bool bPlotErrors)
         double iMeanFluxErr2 = iSub2->GetFluxErrMean();
 
 
-        // std::cout << i << " " << fTimeBinning[i] << " " <<  0.5*fTimeBin << " " << iFlux1.size() << std::endl;
 
-        if (iFlux1.size() < 5){continue;}
+        if (iFlux1.size() < fNSafe){continue;}
 
         // Calculate the DCF
         // Binned DCF values
-        // if (iUDCF) {delete []iUDCF;}
         iUDCF.assign(iFlux1.size(), 0);
 
         for (int j = 0; j < iFlux1.size(); j++)
         {
             iUDCF[j] = (iFlux1[j] - iMeanFlux1) * (iFlux2[j] - iMeanFlux2) \
                         / sqrt( (pow(iStdFlux1,2) - pow(iMeanFluxErr1,2)) * (pow(iStdFlux2,2) - pow(iMeanFluxErr2,2)) );
-                        // / sqrt( pow(iStdFlux1,2) * pow(iStdFlux2,2) );
 
             fDCF[i] += iUDCF[j];
-            // std::cout << "\t\t" << iUDCF[j] << " " << (iFlux1[j] - iMeanFlux1) * (iFlux2[j] - iMeanFlux2)
-            //         //   << " " << (pow(iStdFlux1,2) - pow(iMeanFluxErr1,2)) * (pow(iStdFlux2,2) - pow(iMeanFluxErr2,2))
-            //           << " " << sqrt( pow(iStdFlux1,2) * pow(iStdFlux2,2) )
-            //           << " " << iFlux1[j] << " " << iFlux2[j] 
-            //           << std::endl;
         }
         fDCF[i] /= iFlux1.size();
 
@@ -244,12 +222,6 @@ TGraphErrors *DCF::CalculateDCF(bool bPlotErrors)
             fDCFErr[i] += pow((iUDCF[j] - fDCF[i]),2);
         }
         fDCFErr[i] = sqrt(fDCFErr[i]) / (iFlux1.size() -1);
-
-        // std::cout << i << " " << fTimeBinning[i] << " " << fDCF[i] << " " << fDCFErr[i] 
-        //           << " " << iSub1->GetFluxMean() << " " << iSub2->GetFluxMean()
-        //           << " " << iFlux1.size() << " " << iFlux2.size()
-        //           << std::endl;
-
     }
 
 

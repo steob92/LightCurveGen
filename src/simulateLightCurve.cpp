@@ -36,7 +36,8 @@ int main(int argc, char *argv[])
 
 
     // inital default values
-    string fFilename = "/mnt/Storage/VERITAS/SourceAnalysis/OJ287/2017_Flare/Data/LCData/SwiftXRT_Soft_LC.dat";;
+    // string fFilename = "/mnt/Storage/VERITAS/SourceAnalysis/OJ287/2017_Flare/Data/LCData/SwiftXRT_Soft_LC.dat";;
+    string fFilename = "/Users/obriens/OJ287_Update/Data/LCData/SwiftXRT_Soft_LC.dat";
     string fOutfile = "test.root";
     bool bBetaForced = false;
     double fBeta = 0;
@@ -118,9 +119,9 @@ int main(int argc, char *argv[])
 
     int fNPoints = tLC->GetEntries();
 
-    double *mjd = new double[fNPoints];
-    double *flux = new double[fNPoints];
-    double *flux_err = new double[fNPoints];
+    vector <double> mjd(fNPoints);
+    vector <double> flux(fNPoints);
+    vector <double> flux_err(fNPoints);
 
     // Read the data
     cout << "Reading Data" << endl;
@@ -138,7 +139,7 @@ int main(int argc, char *argv[])
         Using the TGraph::Eval method to interpolate between points
     */
     // Create TGraph of input data
-    TGraph *gInput = new TGraph (fNPoints, mjd, flux);
+    TGraph *gInput = new TGraph (fNPoints, &(mjd[0]), &(flux[0]));
     
     // Define the time of interest
     int fMJD_min = int(mjd[0]);
@@ -146,8 +147,8 @@ int main(int argc, char *argv[])
     int fNData = (fMJD_max - fMJD_min) / fDelT;
 
     // Get interpolated light curves
-    double *inter_mjd = new double[fNData];
-    double *inter_flux = new double[fNData];
+    vector <double> inter_mjd(fNData);
+    vector <double> inter_flux(fNData);
 
     for (int i = 0 ; i < fNData; i ++ )
     {
@@ -193,17 +194,16 @@ int main(int argc, char *argv[])
     TTree *fTree = new TTree("SimulationTree", "SimulationTree");
 
     // Store resampled random light curves
-    double *iResampleMJD = new double[10000];
-    double *iResampleFlux = new double[10000];
+    vector <double> iResampleMJD;
+    vector <double> iResampleFlux;
 
 
     TGraph *gSimLC = 0;
     fTree->Branch("fNPoints", &fNPoints, "fNpoints/I");
     fTree->Branch("Beta", &fBeta, "fBeta/d");
-    fTree->Branch("gSimLC", "TGraph", &gSimLC);
-    // Set to be high... need a better solution
-    // fTree->Branch("mjd", iResampleMJD, "mjd[10000]/d");
-    // fTree->Branch("flux", iResampleFlux, "flux[10000]/d");
+    fTree->Branch("mjd", &iResampleMJD);
+    fTree->Branch("flux", &iResampleFlux);
+
     
 
     int nitter = 0;
@@ -211,6 +211,8 @@ int main(int argc, char *argv[])
     // Main simulation loop
     while (nitter < fNSim)
     {
+        iResampleMJD.assign(fNPoints, 0);
+        iResampleFlux.assign(fNPoints, 0);
         // if ((10*nitter / fNSim ) % 10 == 0)
         // {
         //     cout << nitter << endl;
@@ -222,7 +224,7 @@ int main(int argc, char *argv[])
         // Simulate light curve
         int conv = lc_emp->GetRandomLightCurveEMP13(iSimTime, iSimFlux, fDelT, 1, fNData);
         
-        psd->SetLightCurve( fNData, fDelT, &(iSimTime[0]), &(iSimFlux[0]));
+        psd->SetLightCurve( fNData, fDelT, iSimTime, iSimFlux);
         double *fitParms =  psd->FitPSD();
         // Only take converged fits
         if (psd->GetFitStatus() != 0)
@@ -242,7 +244,7 @@ int main(int argc, char *argv[])
             iResampleFlux[i] = gResampler->Eval(mjd[i]);
         }
 
-        gSimLC = new TGraph(fNData, iResampleMJD, iResampleFlux );
+        gSimLC = new TGraph(fNData, &(iResampleMJD[0]), &(iResampleFlux[0]) );
         fTree->Fill();
     }
 

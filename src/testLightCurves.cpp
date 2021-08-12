@@ -70,10 +70,19 @@ int main()
 
 
     // Look at the DCF
-    DCF *myDCF = new DCF(LC1, LC1);
-    myDCF->SetTimeDetails(1, -100, 100);
+    // DCF *myDCF = 0;
+    TGraphErrors *gDCF = 0;
+    // Stress test
+    for (int i = 0; i < 10000; i ++)
+    {
+        cout << i << endl;
+        // if (myDCF){delete myDCF;}
+        if (gDCF){delete gDCF;}
+        DCF* myDCF = new DCF(LC1, LC1);
+        myDCF->SetTimeDetails(1, -100, 100);
+        gDCF = myDCF->CalculateDCF();
 
-    TGraphErrors *gDCF = myDCF->CalculateDCF();
+    }
     TCanvas *c1 = new TCanvas();
     gDCF->SetLineStyle(1);
     gDCF->SetMarkerStyle(8);

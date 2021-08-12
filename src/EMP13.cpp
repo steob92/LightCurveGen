@@ -11,18 +11,14 @@ EMP13::EMP13() : TK95()
   fPDF = 0;
 
   // Currently don't do anything with this...
-  std::cout << "Creating PSDTool" << std::endl;
-
   fPSDInput = new PSDTools();
   fRand = new TRandom3(0);
-  std::cout << "\tDone" << std::endl;
 
 }
 
 // Assign the light curve
 void EMP13::SetLightCurve(int npoints, double dT, double *time, double *flux)
 {
-  std::cout << "Internal Setting Light Curve" << std::endl;
 
   fNpoints = npoints;
 
@@ -46,9 +42,7 @@ void EMP13::SetLightCurve(int npoints, double dT, double *time, double *flux)
 
   // Calculate the PDF
   fPSDInput->SetModel(0);
-  std::cout << "Internal Setting Light Curve" << std::endl;
   fPSDInput->SetLightCurve( fNpoints, dT, fTime, fFlux);
-  std::cout << "Internal Setting PDF" << std::endl;
 
   SetPDF();
 
@@ -245,7 +239,6 @@ int EMP13::GetRandomLightCurveEMP13(std::vector <double> &iTime, std::vector <do
     iFlux[i] = i_flux_sim[i];
   }
 
-  // std::cout << "Exiting..." << std::endl;
   return i_itterations;
 }
 
@@ -254,12 +247,8 @@ int EMP13::GetRandomLightCurveEMP13(std::vector <double> &iTime, std::vector <do
 EMP13::~EMP13 ()
 {
 
-  std::cout << "Delete 1" << std::endl;
   delete fPDF;
-  std::cout << "Delete 2" << std::endl;
   delete fFFT;
-  std::cout << "Delete 3" << std::endl;
   delete fRand;
-  std::cout << "Delete 4" << std::endl;
   delete fPSDInput;
 }

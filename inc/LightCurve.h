@@ -48,7 +48,12 @@ public:
     LightCurve ( int iNPoints, double *iMJD, double *iFlux );
     LightCurve ( int iNPoints, double *iMJD, double *iFlux, double* iFluxErr );
     
-    ~LightCurve (){};
+    ~LightCurve ()
+    {
+        fMJD.clear();
+        fFlux.clear();
+        fFluxErr.clear();
+    }
 
     int fNPoints;
 
