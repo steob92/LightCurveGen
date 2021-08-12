@@ -5,12 +5,9 @@ DCF::DCF()
 {
     fNTimeBin = 0;
     fTimeBin = 0;
-    fTimeBinning = 0;
     fTimeMin = 0;
     fTimeMax = 0;
 
-    fDCF = 0;
-    fDCFErr = 0;
     fLC1 = 0;
     fLC2 = 0;
 }
@@ -167,7 +164,7 @@ void DCF::SetTimeDetails(double iDelT, double iTimeMin, double iTimeMax)
     fNTimeBin = std::ceil((fTimeMax - fTimeMin) / fTimeBin);
 
     // if (fTimeBinning){delete fTimeBinning;}
-    fTimeBinning = new double[fNTimeBin];
+    fTimeBinning.assign(fNTimeBin, 0 );
     
     for (int i = 0; i < fNTimeBin; i++)
     {
@@ -187,13 +184,13 @@ TGraphErrors *DCF::CalculateDCF(bool bPlotErrors)
     // if (fDCFErr) {delete []fDCFErr;}
     // std::cout << "Done... " << std::endl;
 
-    fDCF = new double[fNTimeBin];
-    fDCFErr = new double[fNTimeBin];
+    fDCF.assign(fNTimeBin, 0 );
+    fDCFErr.assign(fNTimeBin, 0 );
 
     LightCurve *iSub1 = 0;
     LightCurve *iSub2 = 0;
 
-    double* iUDCF = 0;
+    std::vector <double> iUDCF;
 
     for (int i = 0; i < fNTimeBin; i++)
     {
@@ -219,12 +216,12 @@ TGraphErrors *DCF::CalculateDCF(bool bPlotErrors)
 
         // std::cout << i << " " << fTimeBinning[i] << " " <<  0.5*fTimeBin << " " << iFlux1.size() << std::endl;
 
-        if (iFlux1.size() < 11){continue;}
+        if (iFlux1.size() < 5){continue;}
 
         // Calculate the DCF
         // Binned DCF values
         // if (iUDCF) {delete []iUDCF;}
-        iUDCF = new double[iFlux1.size()];
+        iUDCF.assign(iFlux1.size(), 0);
 
         for (int j = 0; j < iFlux1.size(); j++)
         {
@@ -259,12 +256,17 @@ TGraphErrors *DCF::CalculateDCF(bool bPlotErrors)
     TGraphErrors *gDCF = 0;
     if (bPlotErrors)
     {
-     gDCF = new TGraphErrors(fNTimeBin, fTimeBinning, fDCF, 0, fDCFErr);
+     gDCF = new TGraphErrors(fNTimeBin, &(fTimeBinning[0]), &(fDCF[0]), 0, &(fDCFErr[0]));
     }
     else
     {
-     gDCF = new TGraphErrors(fNTimeBin, fTimeBinning, fDCF, 0, 0);
+     gDCF = new TGraphErrors(fNTimeBin, &(fTimeBinning[0]), &(fDCF[0]), 0, 0);
     }
+
+
+    delete iSub1;
+    delete iSub2;
+
     return gDCF;
 }
 

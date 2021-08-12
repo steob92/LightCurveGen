@@ -27,9 +27,9 @@
 class LightCurve {
 private:
     /* data */
-    double *fMJD;
-    double *fFlux;
-    double *fFluxErr;
+    std::vector <double> fMJD;
+    std::vector <double> fFlux;
+    std::vector <double> fFluxErr;
     
 
     // Some Properties of the light curves
@@ -48,12 +48,7 @@ public:
     LightCurve ( int iNPoints, double *iMJD, double *iFlux );
     LightCurve ( int iNPoints, double *iMJD, double *iFlux, double* iFluxErr );
     
-    ~LightCurve ()
-    {
-        // delete []fMJD;
-        // delete []fFlux;
-        // delete []fFluxErr;
-    }
+    ~LightCurve (){};
 
     int fNPoints;
 
@@ -73,20 +68,20 @@ public:
     
     std::vector <double> GetMJD()
     {
-        std::vector <double> vMJD(fNPoints);
-        for (int i = 0; i < fNPoints; i++){vMJD[i] = fMJD[i];}
+        std::vector <double> vMJD(fMJD);
+        // for (int i = 0; i < fNPoints; i++){vMJD[i] = fMJD[i];}
         return vMJD;
     }
     std::vector <double> GetFlux()
     {
-        std::vector <double> vFlux(fNPoints);
-        for (int i = 0; i < fNPoints; i++){vFlux[i] = fFlux[i];}
+        std::vector <double> vFlux(fFlux);
+        // for (int i = 0; i < fNPoints; i++){vFlux[i] = fFlux[i];}
         return vFlux;
     }
     std::vector <double> GetFluxErr()
     {
-        std::vector <double> vFluxErr(fNPoints);
-        for (int i = 0; i < fNPoints; i++){vFluxErr[i] = fFluxErr[i];}
+        std::vector <double> vFluxErr(fFluxErr);
+        // for (int i = 0; i < fNPoints; i++){vFluxErr[i] = fFluxErr[i];}
         return vFluxErr;
     }
 

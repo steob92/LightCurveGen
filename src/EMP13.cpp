@@ -3,36 +3,36 @@
 EMP13::EMP13() : TK95()
 {
   fNpoints = 0;
-  fTime = 0;
-  fFlux = 0;
   fFFT = 0;
   fNlim = 0;
   fMeanFlux = 0;
 
   bEven = false;
   fPDF = 0;
-  fAmp = 0;
-  fPhi = 0;
-  fOmega = 0;
-  // fPSD = 0;
 
-  fPSDInput = 0;
+  // Currently don't do anything with this...
+  std::cout << "Creating PSDTool" << std::endl;
 
+  fPSDInput = new PSDTools();
   fRand = new TRandom3(0);
+  std::cout << "\tDone" << std::endl;
+
 }
 
 // Assign the light curve
 void EMP13::SetLightCurve(int npoints, double dT, double *time, double *flux)
 {
+  std::cout << "Internal Setting Light Curve" << std::endl;
+
   fNpoints = npoints;
 
   // Check if we need to delete
-  if (fTime){delete []fTime;}
-  if (fFlux){delete []fFlux;}
+  fTime.clear();
+  fFlux.clear();
 
   // Create new arrays of appropriate size
-  fTime = new double[fNpoints];
-  fFlux = new double[fNpoints];
+  fTime.assign(fNpoints, 0);
+  fFlux.assign(fNpoints, 0);
   fdT = dT;
 
   fMeanFlux = 0;
@@ -45,10 +45,10 @@ void EMP13::SetLightCurve(int npoints, double dT, double *time, double *flux)
   fMeanFlux /= fNpoints;
 
   // Calculate the PDF
-
-  fPSDInput = new PSDTools();
   fPSDInput->SetModel(0);
+  std::cout << "Internal Setting Light Curve" << std::endl;
   fPSDInput->SetLightCurve( fNpoints, dT, fTime, fFlux);
+  std::cout << "Internal Setting PDF" << std::endl;
 
   SetPDF();
 
@@ -61,12 +61,12 @@ void EMP13::SetPDF()
 {
 
   // Create a new array so we don't overwrite the original data
-  double *iflux = new double[fNpoints];
-  double *iprob = new double[fNpoints];
+  std::vector <double> iflux(fFlux);
+  std::vector <double> iprob(fNpoints);
 
   // Create a copy and min/max sort it
-  std::copy( fFlux, fFlux + fNpoints, iflux);
-  std::sort(iflux, iflux + fNpoints);
+  // std::copy( fFlux.begin(), fFlux.end(), iflux);
+  std::sort( iflux.begin(), iflux.end());
 
   // Creating range in [0,1] seperated by delta
   double delta = 1. / (fNpoints - 1);
@@ -76,25 +76,22 @@ void EMP13::SetPDF()
 
   // Write this to a TGraph
   if (fPDF){delete fPDF;}
-  fPDF = new TGraph(fNpoints, iprob, iflux);
+  fPDF = new TGraph(fNpoints, &(iprob[0]), &(iflux[0]));
 
-  delete []iflux;
-  delete []iprob;
 }
 
 // Get Get array of random numbers described by the PDF
-void EMP13::GetRandomFlux(double *iflux, int npoints)
+void EMP13::GetRandomFlux(std::vector <double> &iflux, int npoints)
 {
   int nsim = 0;
   if (npoints < 0){nsim = fNpoints;}
   else{nsim = npoints;}
   // Get Random Array [0,1]
-  double *irand = new double[nsim];
-  fRand->RndmArray(nsim, irand);
+  std::vector <double > irand(nsim);
+  fRand->RndmArray(nsim, &(irand[0]));
   // Evaluate the CDF
   for (int i = 0; i < nsim; i ++ ){iflux[i] = fPDF->Eval(irand[i]);}
 
-  delete []irand;
 }
 
 
@@ -113,7 +110,7 @@ int EMP13::GetRandomLightCurveEMP13(std::vector <double> &iTime, std::vector <do
   // Step 1.
   // Get a TK95 LC matching the PSD
   // std::cout << "Step 1. \n\t Random TK95" << std::endl;
-  GetRandomLightCurve(i_nsim, dt, &(i_tk95_time[0]), &(i_tk95_flux[0]));
+  GetRandomLightCurve(i_nsim, dt, i_tk95_time, i_tk95_flux);
 
   // Step 2.
   // Get random flux values
@@ -121,7 +118,7 @@ int EMP13::GetRandomLightCurveEMP13(std::vector <double> &iTime, std::vector <do
   std::vector <double> i_flux_sim(i_nsim);
   std::vector <double> i_flux_sim_previous(i_nsim); // Previous step
 
-  GetRandomFlux(&(i_flux_sim[0]), i_nsim);
+  GetRandomFlux(i_flux_sim, i_nsim);
 
 
 
@@ -135,7 +132,7 @@ int EMP13::GetRandomLightCurveEMP13(std::vector <double> &iTime, std::vector <do
   // std::cout << "\t Set PSD" << std::endl;
 
   PSDTools *i_tk95_psd = new PSDTools();
-  i_tk95_psd->SetLightCurve( i_nsim, dt, &(i_tk95_time[0]), &(i_tk95_flux[0]));
+  i_tk95_psd->SetLightCurve( i_nsim, dt, i_tk95_time, i_tk95_flux);
   std::vector <double> iAmp_tk95;
   std::vector <double> iPhi_tk95;
 
@@ -171,7 +168,6 @@ int EMP13::GetRandomLightCurveEMP13(std::vector <double> &iTime, std::vector <do
       for (int i = 0; i < i_nsim; i++)
       {
         delta += TMath::Abs(i_flux_sim_previous[i] - i_flux_sim[i]);
-        // std::cout << i_flux_sim_previous[i] << " " << i_flux_sim[i] << std::endl;
       }
       delta /= i_nsim;
 
@@ -258,18 +254,12 @@ int EMP13::GetRandomLightCurveEMP13(std::vector <double> &iTime, std::vector <do
 EMP13::~EMP13 ()
 {
 
-  delete []fFreq;
-  delete []fRe;
-  delete []fIm;
-  delete []fPDF;
-  delete []fAmp;
-  delete []fPhi;
-  delete []fOmega;
-  delete []fPSD;
-  delete []fTime;
-  delete []fFlux;
-
+  std::cout << "Delete 1" << std::endl;
+  delete fPDF;
+  std::cout << "Delete 2" << std::endl;
   delete fFFT;
+  std::cout << "Delete 3" << std::endl;
   delete fRand;
+  std::cout << "Delete 4" << std::endl;
   delete fPSDInput;
 }

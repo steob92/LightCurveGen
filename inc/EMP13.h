@@ -22,9 +22,9 @@ private:
   /* data */
 
   // FFT Items
-  double *fFreq;
-  double *fRe;
-  double *fIm;
+  std::vector <double> fFreq;
+  std::vector <double> fRe;
+  std::vector <double> fIm;
   TVirtualFFT *fFFT;
 
   // Periodogram things
@@ -35,10 +35,10 @@ private:
   double fdT;
 
   TGraph *fPDF;
-  double *fAmp;
-  double *fPhi;
-  double *fOmega;
-  double *fPSD;
+  std::vector <double> fAmp;
+  std::vector <double> fPhi;
+  std::vector <double> fOmega;
+  std::vector <double> fPSD;
 
   double fPI;
 
@@ -47,8 +47,8 @@ private:
 
   // Light curve book keeping
   int fNpoints;
-  double *fTime;
-  double *fFlux;
+  std::vector <double> fTime;
+  std::vector <double> fFlux;
   PSDTools *fPSDInput;
 
 public:
@@ -60,7 +60,7 @@ public:
   void CalculatePSD();
   void SetPDF();
   TGraph *GetPDF(){return (TGraph*)fPDF->Clone();}
-  void GetRandomFlux(double *iflux, int npoints = -1);
+  void GetRandomFlux(std::vector <double> &iflux, int npoints);
   int GetRandomLightCurveEMP13(std::vector <double>&iTime, std::vector <double>&iFlux, double dt, int nRed, int npoints = -1);
 
   int GetNPoints(){return fNpoints;}

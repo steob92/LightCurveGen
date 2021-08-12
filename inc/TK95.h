@@ -22,9 +22,9 @@ private:
   TF1 *fPSDModel;
 
   // FFT Items
-  double *fFreq;
-  double *fRe;
-  double *fIm;
+  std::vector <double> fFreq;
+  std::vector <double> fRe;
+  std::vector <double> fIm;
 
   double fPI;
 
@@ -43,6 +43,6 @@ public:
   void SetModelParameter(int i, double parm);
 
   // Get the random Light curve
-  void GetRandomLightCurve(int n, double dt,  double *tLC, double *fLC);
+  void GetRandomLightCurve(int n, double dt,  std::vector <double> &tLC, std::vector <double> &fLC);
 };
 #endif

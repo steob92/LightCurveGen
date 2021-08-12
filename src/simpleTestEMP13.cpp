@@ -23,14 +23,15 @@ using namespace std;
 int main()
 {
 
-  string infile = "/mnt/Storage/VERITAS/SourceAnalysis/OJ287/2017_Flare/Data/LCData/SwiftXRT_Soft_LC.dat";
+  // string infile = "/mnt/Storage/VERITAS/SourceAnalysis/OJ287/2017_Flare/Data/LCData/SwiftXRT_Soft_LC.dat";
   /* 
     This code is specific to the my own system...
     ToDo: Replace with a publically available dataset
   */
-  // string infile = "/Users/obriens/OJ287_Update/Data/LCData/SwiftXRT_Soft_LC.dat";
+  string infile = "/Users/obriens/OJ287_Update/Data/LCData/SwiftXRT_Soft_LC.dat";
 
   // Read in data from TTree
+  cout << "Reading in data " << endl;
   TTree *tLC = new TTree();
   tLC->ReadFile(infile.c_str(), "MJD/D:Flux/D:FluxErrL/D:FluxErrH/D");
 
@@ -65,8 +66,8 @@ int main()
   // Get number of days to sim
   int nPoints = int(mjd[tLC->GetEntries()-1]) + 1 - int(mjd[0]);
 
-  double *inter_time = new double[nPoints];
-  double *inter_flux = new double[nPoints];
+  vector <double> inter_time (nPoints);
+  vector <double> inter_flux (nPoints);
   for (int i = 0; i < nPoints; i++)
   {
     inter_time[i] = int(mjd[0]) + i;
@@ -84,13 +85,17 @@ int main()
 
 
   // Simulate a light curve
+  cout << "Setting Light Curve" << endl;
   EMP13 *lc_emp = new EMP13();
+  cout << "Created EMP13" << endl;
   lc_emp->SetLightCurve(nPoints, 1, &(inter_time[0]), &(inter_flux[0]));
   lc_emp->SetModel(0);
   lc_emp->SetModelParameter(0, 1.8);
 
   vector <double> iSimTime;
   vector <double> iSimFlux;
+
+  cout << "Simulating Light Curve" << endl;
 
   lc_emp->GetRandomLightCurveEMP13(iSimTime, iSimFlux, 1, 1, nPoints);
   // // double *iSimTime = new double[100*nPoints];
@@ -101,13 +106,18 @@ int main()
   // // {
   // //   cout << i << " " << inter_time[i] << " " << inter_flux[i] << " " << iSimFlux[i] << endl;
   // // }
+
+  cout << "Measuring PSD" << endl;
+
   PSDTools *psd = new PSDTools();
 
   psd->SetModel(0);
   psd->SetLightCurve( nPoints, 1.0, inter_time, inter_flux);
   double *inParms =  psd->FitPSD();
-  psd->SetLightCurve( nPoints, 1.0, inter_time, &(iSimFlux[0]));
+  psd->SetLightCurve( nPoints, 1.0, inter_time, iSimFlux);
   double *outParms =  psd->FitPSD();
+
+  cout << "Plotting" << endl;
 
   TGraph *gSim = new TGraph(nPoints, &(inter_time[0]), &(iSimFlux[0]));  
   gSim->SetLineColor(3);

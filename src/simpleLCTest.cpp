@@ -41,8 +41,8 @@ int main()
 
 
   // double arrays to hold the light curves
-  double *time = new double[nPoints];
-  double *flux = new double[nPoints];
+  vector <double>time(nPoints);
+  vector <double>flux(nPoints);
 
   // Fit Parameters
   double *fitParms = 0;

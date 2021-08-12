@@ -10,7 +10,9 @@ TK95::TK95 ()
   fPSDModel = 0;
 
   fRand = new TRandom3();
+  // Should allow some seed setting...
   fRand->SetSeed(0);
+
 
   fPI = TMath::Pi();
 }
@@ -18,9 +20,9 @@ TK95::TK95 ()
 TK95::~TK95 ()
 {
   delete fPSDModel;
-  delete fFreq;
-  delete fRe;
-  delete fIm;
+  // delete fFreq;
+  // delete fRe;
+  // delete fIm;
   delete fRand;
 }
 
@@ -86,14 +88,19 @@ void TK95::SetModelParameter(int i, double parm)
   fLC - flux points to be returned
   tLC - time points to be returned
 */
-void TK95::GetRandomLightCurve(int n, double dt, double *tLC, double *fLC)
+void TK95::GetRandomLightCurve(int n, double dt, std::vector <double> &tLC, std::vector <double> &fLC)
 {
 
   double dOmega = (2 * fPI / dt / n);
   double omega = 0;
 
-  fRe = new double[n];
-  fIm = new double[n];
+  // fRe = new double[n];
+  // fIm = new double[n];
+  fRe.clear();
+  fIm.clear();
+  fRe.assign(n, 0);
+  fIm.assign(n, 0);
+  
 
   bool bEven = n % 2 == 0;
   int nlim = bEven ? n/2 -1  : (n-1) / 2;
@@ -120,12 +127,12 @@ void TK95::GetRandomLightCurve(int n, double dt, double *tLC, double *fLC)
   }
 
   TVirtualFFT *fft = TVirtualFFT::FFT(1, &n, "C2R");
-  fft->SetPointsComplex(fRe,fIm);
+  fft->SetPointsComplex(&(fRe[0]),&(fIm[0]));
   fft->Transform();
 
-  fft->GetPoints(fLC);
-  double fmin = *std::min_element(fLC,fLC+n);
-  double fmax = *std::max_element(fLC,fLC+n);
+  fft->GetPoints(&(fLC[0]));
+  double fmin = *std::min_element(fLC.begin(),fLC.end());
+  double fmax = *std::max_element(fLC.begin(),fLC.end());
 
   // min/max normalization
   for (unsigned int i = 0; i < n; i++)
@@ -134,7 +141,7 @@ void TK95::GetRandomLightCurve(int n, double dt, double *tLC, double *fLC)
     fLC[i] = (fLC[i] - fmin) /  (fmax - fmin);
   }
 
-  delete []fRe;
-  delete []fIm;
+  // delete []fRe;
+  // delete []fIm;
   delete fft;
 }

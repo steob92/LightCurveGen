@@ -35,23 +35,23 @@
 class PSDTools {
 private:
 
-  TK95 *LCGen;
+  TK95 LCGen;
 
   // For the light curve
   int fNpoints;
   double fdT;
-  double *fTime;
-  double *fFlux;
+  std::vector <double> fTime;
+  std::vector <double> fFlux;
   double fMeanFlux;
 
   // FFT tools
   TVirtualFFT *fFFT;    // Using ROOT's FFT
-  double* fRe;          // Real Component of FFT
-  double* fIm;          // Complex Component of FFT
-  double* fAmp;         // Amplitude of FFT
-  double* fPhi;         // Phase of FFT
-  double* fOmega;       // Frequency of FFT
-  double* fPSD;         // PSD
+  std::vector <double> fRe;          // Real Component of FFT
+  std::vector <double> fIm;          // Complex Component of FFT
+  std::vector <double> fAmp;         // Amplitude of FFT
+  std::vector <double> fPhi;         // Phase of FFT
+  std::vector <double> fOmega;       // Frequency of FFT
+  std::vector <double> fPSD;         // PSD
   double fMeanTimeDiff;
 
   bool fEven;
@@ -86,7 +86,7 @@ public:
   void SetModelParameters(int n, double* parms);
   void SetModelParameter(int i, double parm);
 
-  void SetLightCurve(int npoints, double dT, double *time, double *flux);
+  void SetLightCurve(int npoints, double dT, std::vector <double> time, std::vector <double> flux);
 
   void CalculatePSD();
   // void CalculatePSDUnEqual();

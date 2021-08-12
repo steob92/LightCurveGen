@@ -12,13 +12,13 @@ private:
 
     int fNTimeBin; // Number of time bins
     double fTimeBin; // Width of the time bins
-    double* fTimeBinning; // Actual Binning
+    std::vector <double> fTimeBinning; // Actual Binning
     double fTimeMin;
     double fTimeMax;
 
     // DCF Value
-    double* fDCF;
-    double* fDCFErr;
+    std::vector <double> fDCF;
+    std::vector <double> fDCFErr;
 
     // Light Curve Objects
     LightCurve *fLC1;
@@ -33,11 +33,10 @@ public:
     
     ~DCF()
     {
-        delete[] fTimeBinning;  
         // delete[] fDCF;
         // delete []fDCFErr;
-        // delete fLC1;
-        // delete fLC2;
+        delete fLC1;
+        delete fLC2;
 
     }
 

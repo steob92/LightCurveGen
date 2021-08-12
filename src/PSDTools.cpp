@@ -3,7 +3,7 @@
 
 PSDTools::PSDTools ()
 {
-  LCGen = new TK95();
+  LCGen = TK95();
 
   //
   fPSDModel = 0;
@@ -12,19 +12,13 @@ PSDTools::PSDTools ()
 
   // Light Curve Bits
   fNpoints = 0;
-  fTime = 0;
-  fFlux = 0;
+  // fTime = 0;
+  // fFlux = 0;
   fdT = 0;
   fMeanFlux = 0;
 
   // FFT Components
   fFFT = 0;
-  fRe = 0;
-  fIm = 0;
-  fAmp = 0;
-  fPhi = 0;
-  fPSD = 0;
-  fOmega = 0;
   // fOmegaMax = 0;
   fOmegaMax = 100;
   fEven = false;
@@ -39,8 +33,8 @@ PSDTools::~PSDTools ()
 {
 
   ClearObjs();
-  delete []fTime;
-  delete []fFlux;
+  // delete []fTime;
+  // delete []fFlux;
 
 
   delete fPSDModel;
@@ -142,17 +136,18 @@ void PSDTools::SetModelParameter(int i, double parm)
 
 
 // Assign the light curve
-void PSDTools::SetLightCurve(int npoints, double dT, double *time, double *flux)
+void PSDTools::SetLightCurve(int npoints, double dT, std::vector<double> time, std::vector<double> flux)
 {
   fNpoints = npoints;
 
   // Check if we need to delete
-  if (fTime){delete []fTime;}
-  if (fFlux){delete []fFlux;}
+  fTime.clear();
+  fFlux.clear();
+  
 
   // Create new arrays of appropriate size
-  fTime = new double[fNpoints];
-  fFlux = new double[fNpoints];
+  fTime.assign(fNpoints, 0);
+  fFlux.assign(fNpoints, 0);
   fdT = dT;
 
   double ifluxmean = 0;
@@ -183,22 +178,28 @@ void PSDTools::CalculatePSD()
 
   // Create FFT object
   fFFT = TVirtualFFT::FFT(1, &fNpoints, "R2C M K");
-  fFFT->SetPoints(fFlux);
+  fFFT->SetPoints(&(fFlux[0]));
   fFFT->Transform();
 
   // Get FFT
-  fRe = new double[fNpoints];
-  fIm = new double[fNpoints];
+  fRe.clear();
+  fRe.assign(fNpoints, 0);
+  fIm.clear();
+  fIm.assign(fNpoints, 0);
 
 
 
   fEven = fNpoints % 2 == 0;
   fNlim = fEven ? fNpoints/2  : (fNpoints-1) / 2;
 
-  fAmp = new double[fNpoints];
-  fPhi = new double[fNpoints];
-  fOmega = new double[fNpoints];
-  fPSD = new double[fNpoints];
+  fAmp.clear();
+  fAmp.assign(fNpoints, 0);
+  fPhi.clear();
+  fPhi.assign(fNpoints, 0);
+  fOmega.clear();
+  fOmega.assign(fNpoints, 0);
+  fPSD.clear();
+  fPSD.assign(fNpoints, 0);
 
 
 
@@ -375,10 +376,10 @@ void PSDTools::GetAmpPhi(std::vector <double> &iAmp, std::vector <double> &iPhi)
 void PSDTools::ClearObjs()
 {
   if(fFFT) {delete fFFT;}
-  if (fRe) {delete [] fRe;}
-  if (fIm) {delete [] fIm;}
-  if (fAmp) {delete [] fAmp;}
-  if (fPhi) {delete [] fPhi;}
-  if (fOmega) {delete [] fOmega;}
-  if (fPSD) {delete [] fPSD;}
+  fRe.clear();
+  fIm.clear();
+  fAmp.clear();
+  fPhi.clear();
+  fOmega.clear();
+  fPSD.clear();
 }

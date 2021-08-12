@@ -6,21 +6,19 @@
 LightCurve::LightCurve ( std::vector <double> iMJD, std::vector <double> iFlux, std::vector <double> iFluxErr )
 {
 
-    fMJD = 0;
-    fFlux = 0;
-    fFluxErr = 0;
+
     
     fNPoints = iMJD.size();
-    fMJD = new double[fNPoints];
-    fFlux = new double[fNPoints];
-    fFluxErr = new double[fNPoints];
+    fMJD.assign(iMJD.begin(), iMJD.end());
+    fFlux.assign(iFlux.begin(), iFlux.end());
+    fFluxErr.assign(iFluxErr.begin(), iFluxErr.end());
 
-    for (int i = 0; i <fNPoints ; i++ )
-    {
-        fMJD[i] = iMJD[i];
-        fFlux[i] = iFlux[i];
-        fFluxErr[i] = iFluxErr[i];
-    }
+    // for (int i = 0; i <fNPoints ; i++ )
+    // {
+    //     fMJD[i] = iMJD[i];
+    //     fFlux[i] = iFlux[i];
+    //     fFluxErr[i] = iFluxErr[i];
+    // }
 
 
     fMJDMin = 99999;
@@ -123,10 +121,10 @@ void LightCurve::CalculateProperties()
     // double iMJDMax = *std::max_element(fMJD.begin(), fMJD.end());
     // double iFluxMin = *std::min_element(fFlux.begin(), fFlux.end());
     // double iFluxMax = *std::max_element(fFlux.begin(), fFlux.end());   
-    fMJDMin = *std::min_element(fMJD, fMJD + fNPoints);
-    fMJDMax = *std::max_element(fMJD, fMJD + fNPoints);
-    fFluxMin = *std::min_element(fFlux, fFlux + fNPoints);
-    fFluxMax = *std::max_element(fFlux, fFlux + fNPoints);   
+    fMJDMin = *std::min_element(fMJD.begin(), fMJD.end());
+    fMJDMax = *std::max_element(fMJD.begin(), fMJD.end());
+    fFluxMin = *std::min_element(fFlux.begin(), fFlux.end());
+    fFluxMax = *std::max_element(fFlux.begin(), fFlux.end());
 
     // // fMJDMin = iMJDMin;
     // fMJDMax = iMJDMax;
